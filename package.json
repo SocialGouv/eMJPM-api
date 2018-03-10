@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
+    "migrate-and-start": "knex migrate:latest && npm start",
+    "wait-migrate-and-start": "sleep 10 && knex migrate:latest && npm start",
     "test": "mocha",
     "eslint": "eslint *.js **/*.js --fix"
   },

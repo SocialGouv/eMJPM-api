@@ -4,10 +4,10 @@ module.exports = {
     client: "pg",
     connection: {
       host: "localhost",
-      user: "postgres",
-      password: "test",
+      user: "emjpm",
+      password: "passdev",
       port: "5434",
-      database: "backendlebontuteur_db_1_test"
+      database: "test"
     },
     migrations: {
       directory: __dirname + "/db/migrations"
@@ -20,10 +20,10 @@ module.exports = {
     client: "pg",
     connection: {
       host: "localhost",
-      user: "postgres",
-      password: "test",
+      user: "emjpm",
+      password: "passdev",
       port: "5434",
-      database: "backendlebontuteur_db_1"
+      database: "dev"
     },
     migrations: {
       directory: __dirname + "/db/migrations"
@@ -34,7 +34,13 @@ module.exports = {
   },
   production: {
     client: "pg",
-    connection: process.env.DATABASE_URL,
+    connection: process.env.DATABASE_URL || {
+      host: "localhost",
+      user: "emjpm",
+      password: "passdev",
+      port: "5434",
+      database: "emjpm"
+    },
     migrations: {
       directory: __dirname + "/db/migrations"
     },

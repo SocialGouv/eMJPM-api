@@ -13,7 +13,7 @@ services:
       - emjpm
     volumes:
       - emjpm-pgdata:/var/lib/postgresql
-      - ./postgresql-init.sh:/docker-entrypoint-initdb.d/postgresql.sh
+      - ./db/postgresql-init.sh:/docker-entrypoint-initdb.d/postgresql-init.sh
   api:
     container_name: emjpm-api
     restart: always

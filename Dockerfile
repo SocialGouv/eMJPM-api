@@ -8,8 +8,4 @@ COPY . .
 
 RUN npm install
 
-#ENV PORT $API_PORT
-
-#RUN ./node_modules/.bin/knex migrate:latest --knexfile ./knexfile.js
-
-CMD ["npm", "start"]
+CMD ["npm", "run", "wait-migrate-and-start"]
