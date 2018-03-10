@@ -3,9 +3,7 @@ const express = require("express");
 const router = express.Router();
 const queries = require("../db/queries");
 
-
-const {loginRequired} = require("../auth/_helpers");
-
+const { loginRequired } = require("../auth/_helpers");
 
 router.put("/:mandataireId", async (req, res, next) => {
     const ti = await queries.getMandataireByUserId(req.user.id);
@@ -34,8 +32,7 @@ router.get("/:mandataireId", async (req, res, next) => {
         });
 });
 
-
-router.get("/",loginRequired, async (req, res, next) => {
+router.get("/", loginRequired, async (req, res, next) => {
     const ti = await queries.getTiByUserId(req.user.id);
     queries
         .getAllMandataires(ti.id)
@@ -48,14 +45,12 @@ router.get("/",loginRequired, async (req, res, next) => {
         });
 });
 
-
-
 router.put("/:mandataireId/capacite", async (req, res, next) => {
     const ti = await queries.getMandataireByUserId(req.user.id);
-    const capaciteMandataire = queries.CapaciteMandataire(ti.id)
-    console.log (capaciteMandataire)
+    const capaciteMandataire = queries.CapaciteMandataire(ti.id);
+    console.log(capaciteMandataire);
     queries
-        .update(ti.id, {disponibilite: capaciteMandataire})
+        .update(ti.id, { disponibilite: capaciteMandataire })
         .then(function() {
             return queries.getSingle(ti.id);
         })
