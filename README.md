@@ -31,7 +31,7 @@ docker exec -it emjpm-postgres createdb -U postgres backendlebontuteur_db_1
 
 ### Tests
 
-```sht
+```sh
 
 docker exec -it emjpm-postgres createdb -U postgres backendlebontuteur_db_1_test
 
@@ -39,6 +39,13 @@ docker exec -it emjpm-postgres createdb -U postgres backendlebontuteur_db_1_test
 
 ./node_modules/.bin/knex seed:run --env test
 ```
+
+### Production
+
+ - Editer le fichier [.env](./env)
+ - Builder l'image avec `docker build . -t emjpm-api`
+ - Lancer les containers avec `docker-compose up`
+
 
 ## Env
 
