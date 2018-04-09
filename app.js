@@ -60,7 +60,9 @@ if (process.env.NODE_ENV === "production") {
 } else {
   app.use(
     session({
-      secret: SECRET_KEY
+      secret: SECRET_KEY,
+      resave: false,
+      saveUninitialized: true
     })
   );
 }
@@ -107,7 +109,7 @@ const port = process.env.PORT || 4000;
 
 if (require.main === module) {
   app.listen(port, () => {
-    console.log(`Listening on http://127.0.0.1:${port}`);
+    console.log(`Listening on http://127.0.0.1:${port} [NODE_ENV:${process.env.NODE_ENV}]`);
   });
 }
 
