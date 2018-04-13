@@ -1,15 +1,38 @@
-version: "3"
+version: '3'
+
 services:
- db:
-   image: postgres
-   container_name: emjpm-postgres
-   environment:
-     - POSTGRES_USER=postgres
-     - POSTGRES_PASSWORD=test
-     - POSTGRES_DB=postgres
-   ports:
-     - "5434:5432"
-   volumes:
-     - pgdata:/var/lib/postgresql/data
+  postgres:
+    container_name: emjpm-postgres
+    image: postgres:9
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - $POSTGRES_PORT:5432
+    networks:
+      - emjpm
+    volumes:
+      - emjpm-pgdata:/var/lib/postgresql
+      - ./db/postgresql-init.sh:/docker-entrypoint-initdb.d/postgresql-init.sh
+  api:
+    container_name: emjpm-api
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - PORT=${API_PORT}
+      - DATABASE_URL=psql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
+    image: emjpm-api
+    ports:
+      - $API_PORT:$API_PORT
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    networks:
+      - emjpm
+
 volumes:
- pgdata:
+  emjpm-pgdata:
+networks:
+  emjpm:
