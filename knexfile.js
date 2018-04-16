@@ -24,6 +24,7 @@ module.exports = {
       password: "test",
       port: "5434",
       database: "backendlebontuteur_db_1"
+      // database: "emjpmapi_db"
     },
     migrations: {
       directory: __dirname + "/db/migrations"
