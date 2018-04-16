@@ -23,7 +23,10 @@ module.exports = {
       user: "postgres",
       password: "test",
       port: "5434",
-      database: "emjpm_dev"
+
+      // database: "emjpm_dev"
+      database: "backendlebontuteur_db_1"
+      // database: "emjpmapi_db"
     },
     migrations: {
       directory: __dirname + "/db/migrations"
