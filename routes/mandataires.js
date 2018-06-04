@@ -5,17 +5,8 @@ const queries = require("../db/queries");
 
 const { loginRequired } = require("../auth/_helpers");
 
-/*
- - modifier la table user avec un type
- - quid indexes
- - droits
- - quid disponibilite/capacité : rename ?
-*/
-
 // récupère les données d'un mandataire
-// droits : ?
 router.get("/1", loginRequired, async (req, res, next) => {
-  //console.log(req.user);
   const mandataire = await queries.getMandataireByUserId(req.user.id);
   /*
   console.log(mandataire);
@@ -33,7 +24,6 @@ router.get("/1", loginRequired, async (req, res, next) => {
 });
 
 // met à jour les données d'un mandataire
-// droits : ?
 router.put("/1", loginRequired, async (req, res, next) => {
   const mandataire = await queries.getMandataireByUserId(req.user.id);
   /* if (
@@ -51,7 +41,7 @@ router.put("/1", loginRequired, async (req, res, next) => {
 
 // récupère une liste de mandataires pour le user en question
 // TODO : le user doit être un TI
-// droits : ?
+// droits : ti lui-même
 router.get("/", loginRequired, async (req, res, next) => {
   const ti = await queries.getTiByUserId(req.user.id);
   if (!ti) {
@@ -63,11 +53,10 @@ router.get("/", loginRequired, async (req, res, next) => {
     .catch(error => next(error));
 });
 
-// ?
+// TODO : trigger pour MAJ + rename colonnes
 // met à jour la capacité ("disponibilite") d'un mandataire
 // selon le nb de mesures en cours
-// droits : ?
-//
+// droits : user en cours
 router.put("/:mandataireId/capacite", async (req, res, next) => {
   const mandataire = await queries.getMandataireByUserId(req.user.id);
   // récupères le nb de mesure attribuées pour ce mandataire
@@ -78,31 +67,6 @@ router.put("/:mandataireId/capacite", async (req, res, next) => {
     .then(mandataire => res.status(200).json(mandataire))
     .catch(error => next(error));
 });
-
-// ?
-router.put("/:mandataireId/capaciteEteinte", async (req, res, next) => {
-  const ti = await queries.getMandataireByUserId(req.user.id);
-  const capaciteMandataire = queries.CapaciteEteinteMandataire(ti.id);
-  queries
-    .CapaciteMandataire(ti.id)
-    .then(() => queries.CapaciteMandataire(ti.id))
-    .then(mandataire => res.status(200).json(queries.CapaciteMandataire(ti.id)))
-    .catch(error => next(error));
-});
-
-// router.post("/", function(req, res, next) {
-//   queries
-//     .add(req.body)
-//     .then(function(mandataireID) {
-//       return queries.getSingle(mandataireID);
-//     })
-//     .then(function(mandataire) {
-//       res.status(200).json(mandataire);
-//     })
-//     .catch(function(error) {
-//       next(error);
-//     });
-// });
 
 router.use("/", require("./commentaires"));
 router.use("/", require("./mandataireMesures"));
