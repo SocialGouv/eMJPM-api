@@ -258,10 +258,12 @@ function updateAntenne(mesureID, updates) {
     .update(updates);
 }
 function deleteAntenne(showID) {
-  return knex("serviceAntennes")
-    .debug()
-    .where("id", parseInt(showID))
-    .del();
+  return (
+    knex("serviceAntennes")
+      //.debug()
+      .where("id", parseInt(showID))
+      .del()
+  );
 }
 
 module.exports = {
