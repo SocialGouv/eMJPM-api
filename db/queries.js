@@ -266,6 +266,15 @@ function deleteAntenne(showID) {
   );
 }
 
+const isMandataireInTi = (mandataire_id, ti_id) =>
+  knex
+    .from("mandatairetis")
+    .where({
+      mandataire_id,
+      ti_id
+    })
+    .then(res => res.length > 0);
+
 module.exports = {
   getAllUsers,
   getAllMandataires,
@@ -303,5 +312,6 @@ module.exports = {
   updateAntenne,
   deleteAntenne,
   CapaciteEteinteMandataire,
-  getAllMesuresEteinte
+  getAllMesuresEteinte,
+  isMandataireInTi
 };
