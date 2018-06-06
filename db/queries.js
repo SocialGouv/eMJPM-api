@@ -199,8 +199,8 @@ function CapaciteEteinteMandataire(mandataireID) {
     });
 }
 
-function addMesure(mesureID) {
-  return knex("mesures").insert(mesureID);
+function addMesure(data) {
+  return knex("mesures").insert(data);
 }
 
 function getSingleMesure(mesureID) {
@@ -208,9 +208,9 @@ function getSingleMesure(mesureID) {
     .where("id", parseInt(mesureID))
     .first();
 }
-function updateMesure(mesureID, updates) {
+function updateMesure(where, updates) {
   return knex("mesures")
-    .where("id", parseInt(mesureID))
+    .where(where)
     .update(updates);
 }
 
