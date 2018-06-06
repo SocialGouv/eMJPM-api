@@ -43,6 +43,9 @@ router.put("/1", loginRequired, async (req, res, next) => {
 // TODO : le user doit être un TI
 // droits : ti lui-même
 router.get("/", loginRequired, async (req, res, next) => {
+  if (req.user.type !== "ti") {
+    return next(new Error(401));
+  }
   const ti = await queries.getTiByUserId(req.user.id);
   if (!ti) {
     return next(new Error(401));
