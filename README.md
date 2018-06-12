@@ -37,6 +37,10 @@ Les comptes de dev sont définis dans les [seeds](https://github.com/SocialGouv/
 ### Tests
 
 ```sh
+
+# setup la base de test
+docker exec emjpm-postgres createdb emjpm_test -U postgres
+
 ./node_modules/.bin/knex migrate:latest --env test
 
 ./node_modules/.bin/knex seed:run --env test
@@ -77,7 +81,10 @@ Ouvre le port 1111 en local vers le Postgres distant
 
 `ssh -L 1111:localhost:5434 mitech@xxxxxxxxxx` (utiliser l'IP externe de la machine)
 
-Restaurer un dump :
+### Restaurer un dump :
 
 `cat /path/to/dump_16-04-2018_11_51_55.sql | psql -U postgres -p 1111 -h 127.0.0.1`
 
+### Executer un script local sur machine distante :
+
+`ssh xxx@88.191.188.xxx "cd /path/to/projext && NODE_ENV=production node" < node.js`
