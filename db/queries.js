@@ -257,13 +257,10 @@ function updateAntenne(mesureID, updates) {
     .where("id", parseInt(mesureID))
     .update(updates);
 }
-function deleteAntenne(showID) {
-  return (
-    knex("serviceAntennes")
-      //.debug()
-      .where("id", parseInt(showID))
-      .del()
-  );
+function deleteAntenne(where) {
+  return knex("serviceAntennes")
+    .where(where)
+    .del();
 }
 
 const isMandataireInTi = (mandataire_id, ti_id) =>
