@@ -4,6 +4,8 @@ const knex = require("../knex.js");
 //const ALLOWED_FILTERS = ["users.active", "users.type"];
 
 // nombre de mesures pour le mandataire
+const Mandataires = () => knex("mandataires");
+
 const getCountMesures = (id, filters = { status: "Mesure en cours" }) =>
   knex("mesures")
     .count("*")
@@ -85,12 +87,90 @@ const getMesuresMap = mandataireId =>
       "mesures.code_postal,geolocalisation_code_postal.latitude,geolocalisation_code_postal.longitude"
     );
 
+const getAllByMandatairesFilter = (
+  ti_id,
+  latnorthEast,
+  latsouthWest,
+  longNorthEast,
+  longSouthWest
+) =>
+  knex
+    .from("mandataires")
+    .whereBetween("geolocalisation_code_postal.latitude", [
+      latsouthWest,
+      latnorthEast
+    ])
+    .whereBetween("geolocalisation_code_postal.longitude", [
+      longSouthWest,
+      longNorthEast
+    ])
+    .innerJoin(
+      "mandataire_tis",
+      "mandataire_tis.mandataire_id",
+      "mandataires.id"
+    )
+    .innerJoin(
+      "geolocalisation_code_postal",
+      "geolocalisation_code_postal.code_postal",
+      "mandataires.code_postal"
+    )
+    .groupByRaw(
+      "mandataires.id,geolocalisation_code_postal.latitude,geolocalisation_code_postal.longitude"
+    )
+    .where("mandataire_tis.ti_id", parseInt(ti_id))
+    .select(
+      knex.raw(
+        "distinct ON(mandataires.id) mandataires.id,mandataires.*,geolocalisation_code_postal.latitude,geolocalisation_code_postal.longitude"
+      )
+    );
+
+const getAllMandataires = ti_id =>
+  knex
+    .from("mandataire_tis")
+    .where("ti_id", parseInt(ti_id))
+    .innerJoin("mandataires", "mandataire_tis.mandataire_id", "mandataires.id");
+
+const getAllServicesByTis = ti_id =>
+  knex
+    .from("mandataire_tis")
+    .innerJoin("mandataires", "mandataire_tis.mandataire_id", "mandataires.id")
+    .where({ ti_id: parseInt(ti_id), type: "Service" });
+
+const mesureEnAttente = mandataireID =>
+  knex("mesures")
+    .count("*")
+    .where({
+      mandataire_id: parseInt(mandataireID),
+      status: "Mesure en attente"
+    });
+
+const update = (mandataireID, updates) =>
+  Mandataires()
+    .where("id", parseInt(mandataireID))
+    .update(updates);
+
+const getCoordonneByPosteCode = userId =>
+  knex
+    .from("geolocalisation_code_postal")
+    .where("code_postal", userId)
+    .first();
+
+
+
 module.exports = {
-  getCountMesures,
   updateCountMesures,
   updateDateMesureUpdate,
   getMandataireById,
   getMandataireByUserId,
   updateMandataire,
+<<<<<<< HEAD
   getMesuresMap
+=======
+  mesureEnAttente,
+  getAllServicesByTis,
+  getAllMandataires,
+  getAllByMandatairesFilter,
+  update,
+  getCoordonneByPosteCode
+>>>>>>> refactor: Refactor queries
 };
