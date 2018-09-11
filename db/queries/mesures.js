@@ -88,6 +88,58 @@ const getAllMesuresByMandatairesFilter = (
         .where("mandataire_tis.ti_id", parseInt(ti_id));
     });
 
+// async function getAllMesuresByMandatairesFilter(
+//     ti_id,
+//     latnorthEast,
+//     latsouthWest,
+//     longNorthEast,
+//     longSouthWest
+// ) {
+//     const mesuresTiQuery = knex
+//         .from("mesures")
+//         .select(
+//             knex.raw("distinct ON(mandataires.id) mandataires.id, mandataires.*"),
+//             knex.raw("COALESCE(geolocalisation_code_postal.latitude, 0) as latitude"),
+//             knex.raw(
+//                 "COALESCE(geolocalisation_code_postal.longitude, 0) as longitude"
+//             )
+//         )
+//         .innerJoin("mandataires", "mandataires.id", "mesures.mandataire_id")
+//         .innerJoin(
+//             "mandataire_tis",
+//             "mandataire_tis.mandataire_id",
+//             "mandataires.id"
+//         )
+//         .innerJoin(
+//             "geolocalisation_code_postal",
+//             "geolocalisation_code_postal.code_postal",
+//             "mesures.code_postal"
+//         )
+//         .innerJoin("users", "users.id", "mandataires.user_id")
+//         .where({ "mandataire_tis.ti_id": parseInt(ti_id) })
+//         .groupByRaw(
+//             "geolocalisation_code_postal.latitude,geolocalisation_code_postal.longitude,mandataires.id"
+//         );
+//
+//     const allMesures = await mesuresTiQuery
+//         .clone()
+//         .where(builder =>
+//             builder
+//                 .whereBetween("geolocalisation_code_postal.latitude", [
+//                     latsouthWest,
+//                     latnorthEast
+//                 ])
+//                 .whereBetween("geolocalisation_code_postal.longitude", [
+//                     longSouthWest,
+//                     longNorthEast
+//                 ])
+//                 .whereNot({ "users.type": "service" })
+//         )
+//         .orWhere({
+//             "users.type": "service"
+//         });
+//     return allMesures;
+// }
 const getAllMesuresByPopUp = (ti_id, type) => {
   const where = {
     "mandataire_tis.ti_id": parseInt(ti_id),
@@ -180,29 +232,6 @@ const getAllMesures = mandataireID =>
     status: "Mesure en cours"
   });
 
-const getAllMesuresByMandatairesForMaps = mandataireID =>
-  knex("mesures")
-    .select(
-      knex.raw(
-        "COUNT(mesures.code_postal), array_agg('' || mesures.type || ' ' || mesures.annee ||'')"
-      ),
-      "mesures.code_postal",
-      "geolocalisation_code_postal.latitude",
-      "geolocalisation_code_postal.longitude"
-    )
-    .innerJoin(
-      "geolocalisation_code_postal",
-      "mesures.code_postal",
-      "geolocalisation_code_postal.code_postal"
-    )
-    .where({
-      mandataire_id: parseInt(mandataireID),
-      status: "Mesure en cours"
-    })
-    .groupByRaw(
-      "mesures.code_postal,geolocalisation_code_postal.latitude,geolocalisation_code_postal.longitude"
-    );
-
 const getAllMesuresAttente = mandataireID =>
   knex("mesures")
     .select("mesures.*", "tis.etablissement")
@@ -234,7 +263,6 @@ module.exports = {
   updateMesure,
   getAllMesuresEteinte,
   getAllMesuresAttente,
-  getAllMesuresByMandatairesForMaps,
   getAllMesures,
   addMesure,
   getPostecode

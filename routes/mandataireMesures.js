@@ -17,7 +17,6 @@ const {
   updateMesure,
   getAllMesuresEteinte,
   getAllMesuresAttente,
-  getAllMesuresByMandatairesForMaps,
   getAllMesures,
   addMesure
 } = require("../db/queries/mesures");
