@@ -15,6 +15,7 @@ const getAllMesuresByMandataires = ti_id =>
       "mandataire_tis.mandataire_id",
       "mandataires.id"
     )
+    .innerJoin("users", "mandataires.user_id", "users.id")
     .where("mandataire_tis.ti_id", parseInt(ti_id))
     .select(
       "mesures.id",
@@ -23,7 +24,7 @@ const getAllMesuresByMandataires = ti_id =>
       "geolocalisation_code_postal.longitude",
       "mandataires.nom",
       "mandataires.prenom",
-      "mandataires.type",
+      "users.type",
       "mesures.date_ouverture",
       "mesures.ville"
     );
@@ -71,20 +72,22 @@ const getAllMesuresByMandatairesFilter = (
         "mandataires.id",
         "mandataires.*",
         "geolocalisation_code_postal.latitude",
-        "geolocalisation_code_postal.longitude"
+        "geolocalisation_code_postal.longitude",
+        "users.type"
       )
         .from("mandataires")
-        .where("type", "Service")
         .innerJoin(
           "mandataire_tis",
           "mandataire_tis.mandataire_id",
           "mandataires.id"
         )
+        .innerJoin("users", "mandataires.user_id", "users.id")
         .innerJoin(
           "geolocalisation_code_postal",
           "geolocalisation_code_postal.code_postal",
           "mandataires.code_postal"
         )
+        .where("users.type", "service")
         .where("mandataire_tis.ti_id", parseInt(ti_id));
     });
 
@@ -146,7 +149,7 @@ const getAllMesuresByPopUp = (ti_id, type) => {
     status: "Mesure en cours"
   };
   if (type) {
-    where["mandataires.type"] = type;
+    where["users.type"] = type;
   }
   return knex
     .from("mesures")
@@ -169,6 +172,7 @@ const getAllMesuresByPopUp = (ti_id, type) => {
       "mandataire_tis.mandataire_id",
       "mandataires.id"
     )
+    .innerJoin("users", "mandataires.user_id", "users.id")
     .where(where)
     .groupByRaw(
       "mesures.code_postal,geolocalisation_code_postal.longitude,geolocalisation_code_postal.latitude"

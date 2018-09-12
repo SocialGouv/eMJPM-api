@@ -8,7 +8,6 @@ exports.seed = function(knex, Promise) {
           etablissement: "UDAHF",
           prenom: "Adrien",
           email: "ud@ud.com",
-          type: "preposes",
           code_postal: "62000",
           ville: "Arras",
           telephone: "0237100000",
@@ -28,7 +27,6 @@ exports.seed = function(knex, Promise) {
         return knex("mandataires").insert({
           etablissement: "test42",
           email: "panam@paris.com",
-          type: "preposes",
           prenom: "Julien",
           code_postal: "62000",
           ville: "Paris",
@@ -50,7 +48,6 @@ exports.seed = function(knex, Promise) {
         return knex("mandataires").insert({
           etablissement: "test43",
           email: "panam2@paris.com",
-          type: "preposes",
           prenom: "Doug",
           code_postal: "75000",
           ville: "Paris",

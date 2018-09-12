@@ -8,11 +8,6 @@ const getAllAntennes = mandataireId =>
 const addAntenne = mandataireId =>
   knex("service_antennes").insert(mandataireId);
 
-const updateAntenne = (mesureID, updates) =>
-  knex("service_antennes")
-    .where("id", parseInt(mesureID))
-    .update(updates);
-
 const deleteAntenne = where =>
   knex("service_antennes")
     .where(where)
@@ -21,6 +16,5 @@ const deleteAntenne = where =>
 module.exports = {
   getAllAntennes,
   addAntenne,
-  updateAntenne,
   deleteAntenne
 };
