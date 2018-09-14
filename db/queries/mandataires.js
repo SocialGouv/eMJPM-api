@@ -25,11 +25,9 @@ const updateMandataire = (id, data) =>
 // todo move to trigger/view
 const updateCountMesures = id =>
   getCountMesures(id).then(count =>
-    knex("mandataires")
-      .where({ id })
-      .update({
-        mesures_en_cours: count
-      })
+    knex.raw(`UPDATE mandataires
+      SET mesures_en_cours = ${count}
+      WHERE ID = ${id};`)
   );
 
 // todo move to trigger/view
