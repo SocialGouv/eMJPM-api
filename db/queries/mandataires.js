@@ -95,7 +95,9 @@ function getAllByMandatairesFilter(
   return knex
     .from("mandataires")
     .select(
-      knex.raw("distinct ON(mandataires.id) mandataires.id,mandataires.*"),
+      knex.raw(
+        "distinct ON(mandataires.id) mandataires.id,mandataires.*,users.type"
+      ),
       knex.raw("COALESCE(geolocalisation_code_postal.latitude, 0) as latitude"),
       knex.raw(
         "COALESCE(geolocalisation_code_postal.longitude, 0) as longitude"
@@ -125,7 +127,7 @@ function getAllByMandatairesFilter(
       "mandataires.code_postal"
     )
     .groupByRaw(
-      "mandataires.id,geolocalisation_code_postal.latitude,geolocalisation_code_postal.longitude"
+      "mandataires.id,geolocalisation_code_postal.latitude,geolocalisation_code_postal.longitude,users.type"
     );
 }
 
@@ -134,8 +136,9 @@ const getAllMandataires = ti_id =>
     .from("mandataire_tis")
     .where("ti_id", parseInt(ti_id))
     .innerJoin("mandataires", "mandataire_tis.mandataire_id", "mandataires.id")
+    .innerJoin("users", "mandataires.user_id", "users.id")
     .select(
-      knex.raw("distinct mandataires.*"),
+      knex.raw("distinct mandataires.*,users.type"),
       knex.raw("COALESCE(geolocalisation_code_postal.latitude, 0) as latitude"),
       knex.raw(
         "COALESCE(geolocalisation_code_postal.longitude, 0) as longitude"

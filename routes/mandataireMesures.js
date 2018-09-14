@@ -6,12 +6,10 @@ const { loginRequired, typeRequired } = require("../auth/_helpers");
 const {
   updateCountMesures,
   updateDateMesureUpdate,
-    getMandataireByUserId
+  getMandataireByUserId
 } = require("../db/queries/mandataires");
 
-
-const {getTiByUserId} = require("../db/queries/tis")
-
+const { getTiByUserId } = require("../db/queries/tis");
 
 const {
   updateMesure,
