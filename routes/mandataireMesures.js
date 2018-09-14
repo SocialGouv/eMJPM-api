@@ -1,48 +1,113 @@
 const express = require("express");
 
 const router = express.Router();
-const queries = require("../db/queries");
-const { getMesuresMap } = require("../db/queries/mandataires");
 const { loginRequired, typeRequired } = require("../auth/_helpers");
 
 const {
   updateCountMesures,
-  updateDateMesureUpdate
+  updateDateMesureUpdate,
+  getMandataireByUserId
 } = require("../db/queries/mandataires");
 
+const { getTiByUserId } = require("../db/queries/tis");
+
+const {
+  updateMesure,
+  getAllMesuresEteinte,
+  getAllMesuresAttente,
+  getAllMesures,
+  addMesure
+} = require("../db/queries/mesures");
+
 // update mesure
+
+/** @swagger
+ * /mandataires/1/tis:
+ *   put:
+ *     description: update a mesure for a specific mandataire
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: mesureId
+ *         description: filters to apply to the list. ex `?users.active=true`
+ *         required: true
+ *         schema:
+ *           type: object
+ *     requestBodies:
+ *       description: A JSON object containing commentaire
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               ti_id:
+ *                 type: integer
+ *                 required: true
+ *   responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ */
 router.put(
   "/:mandataireId/mesures/:mesureId",
   typeRequired("individuel", "prepose"),
   async (req, res, next) => {
-    const mandataire = await queries.getMandataireByUserId(req.user.id);
-    queries
-      .updateMesure(
-        {
-          id: req.params.mesureId,
-          // ⚠️ ensure to override a mandataire only
-          mandataire_id: mandataire.id
-        },
-        req.body
-      )
+    const mandataire = await getMandataireByUserId(req.user.id);
+    updateMesure(
+      {
+        id: req.params.mesureId,
+        // ⚠️ ensure to override a mandataire only
+        mandataire_id: mandataire.id
+      },
+      req.body
+    )
       //.then(() => queries.getAllMesures(mandataire.id))
       // todo : trigger/view
-      .then(() => updateDateMesureUpdate(mandataire.id))
+      //.then(() => updateDateMesureUpdate(mandataire.id))
       // todo : trigger/view
       .then(() => updateCountMesures(mandataire.id))
-      .then(() => queries.getAllMesures(mandataire.id))
+      .then(() => getAllMesures(mandataire.id))
       .then(mesures => res.status(200).json(mesures))
       .catch(error => next(error));
   }
 );
 
 // create mesure
+
+/** @swagger
+ * /mandataires/1/mesures:
+ *   post:
+ *     description: post a new mesures for specific mandataire
+ *     produces:
+ *       - application/json
+ *     requestBodies:
+ *       description: A JSON object containing commentaire
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               ti_id:
+ *                 type: integer
+ *                 required: true
+ *   responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ */
 router.post(
   "/:mandataireId/mesures",
   typeRequired("individuel", "prepose", "ti"),
   async (req, res, next) => {
-    const mandataire = await queries.getMandataireByUserId(req.user.id);
-    const ti = await queries.getTiByUserId(req.user.id);
+    const mandataire = await getMandataireByUserId(req.user.id);
+    const ti = await getTiByUserId(req.user.id);
     const body = {
       ...req.body
     };
@@ -51,22 +116,18 @@ router.post(
     }
     if (req.user.type === "ti") {
       body["ti_id"] = ti.id;
-      queries
-        .addMesure(body)
+      addMesure(body)
         .then(mesures => res.status(200).json({ success: true }))
         .catch(error => {
           console.log(error);
           next(error);
         });
     } else {
-      queries
-        .addMesure(body)
-        .then(() => queries.getAllMesures(mandataire.id))
+      addMesure(body)
+        .then(() => getAllMesures(mandataire.id))
         .then(mesures => res.status(200).json(mesures))
-        // todo : trigger/view
         .then(() => updateCountMesures(mandataire.id))
         // todo : trigger/view
-        .then(() => updateDateMesureUpdate(mandataire.id))
         .catch(error => {
           console.log(error);
           next(error);
@@ -75,14 +136,37 @@ router.post(
   }
 );
 
+/** @swagger
+ * /mandataires/1/mesure-reservation:
+ *   post:
+ *     description: post a new reservation mesure
+ *     produces:
+ *       - application/json
+ *     requestBodies:
+ *       description: A JSON object containing commentaire
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               ti_id:
+ *                 type: integer
+ *                 required: true
+ *   responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ */
 router.post(
   "/:mandataireId/mesure-reservation",
   typeRequired("ti"),
   async (req, res, next) => {
-    queries
-      .addMesure({
-        ...req.body
-      })
+    addMesure({
+      ...req.body
+    })
       .then(mesures => res.status(200).json(mesures))
       .catch(error => {
         console.log(error);
@@ -91,18 +175,43 @@ router.post(
   }
 );
 
+/** @swagger
+ * /mandataires/1/mesures:
+ *   get:
+ *     description: get all mesures en cours for a specific mandataires
+ *     produces:
+ *       - application/json
+ *   responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ */
 router.get(
   "/:mandataireId/mesures",
   typeRequired("individuel", "prepose"),
   async (req, res, next) => {
-    const mandataire = await queries.getMandataireByUserId(req.user.id);
-    queries
-      .getAllMesures(mandataire.id)
+    const mandataire = await getMandataireByUserId(req.user.id);
+    getAllMesures(mandataire.id)
       .then(mesures => res.status(200).json(mesures))
       .catch(error => next(error));
   }
 );
 
+/** @swagger
+ * /mandataires/1/mesuresForMaps:
+ *   get:
+ *     description: get all mesures for a specific mandataire to display inside a map
+ *     produces:
+ *       - application/json
+ *   responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ */
 router.get(
   "/:mandataireId/mesuresForMaps",
   typeRequired("individuel", "prepose"),
@@ -114,25 +223,49 @@ router.get(
   }
 );
 
+/** @swagger
+ * /mandataires/1/mesures/attente:
+ *   get:
+ *     description: get all mesures en attente for a specific mandataire
+ *     produces:
+ *       - application/json
+ *   responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ */
 router.get(
   "/:mandataireId/mesures/attente",
   typeRequired("individuel", "prepose"),
   async (req, res, next) => {
-    const mandataire = await queries.getMandataireByUserId(req.user.id);
-    queries
-      .getAllMesuresAttente(mandataire.id)
+    const mandataire = await getMandataireByUserId(req.user.id);
+    getAllMesuresAttente(mandataire.id)
       .then(mesures => res.status(200).json(mesures))
       .catch(error => next(error));
   }
 );
 
+/** @swagger
+ * /mandataires/1/mesures/Eteinte:
+ *   get:
+ *     description: get all mesures eteintes for a specific mandataire
+ *     produces:
+ *       - application/json
+ *   responses:
+ *       200:
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ */
 router.get(
   "/:mandataireId/mesures/Eteinte",
   typeRequired("individuel", "prepose"),
   async (req, res, next) => {
-    const mandataire = await queries.getMandataireByUserId(req.user.id);
-    queries
-      .getAllMesuresEteinte(mandataire.id)
+    const mandataire = await getMandataireByUserId(req.user.id);
+    getAllMesuresEteinte(mandataire.id)
       .then(mesures => res.status(200).json(mesures))
       .catch(error => next(error));
   }
