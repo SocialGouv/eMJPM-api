@@ -23,11 +23,11 @@ const { getTiByUserId } = require("../db/queries/tis");
  *     produces:
  *       - application/json
  *   responses:
- *       200:
- *         content:
- *           application/json:
- *             schema:
- *               type: array
+ *     200:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
  */
 router.get("/", typeRequired("ti"), async (req, res, next) => {
   if (req.user.type !== "ti") {
@@ -69,12 +69,12 @@ router.get("/", typeRequired("ti"), async (req, res, next) => {
  *               longSouthWest:
  *                 type: float
  *                 required: true
- *      responses:
- *         200:
- *           content:
- *             application/json:
- *               schema:
- *                 type: array
+ *     responses:
+ *        200:
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: array
  */
 router.post("/filters", loginRequired, async (req, res, next) => {
   const ti = await getTiByUserId(req.user.id);
@@ -97,27 +97,26 @@ router.post("/filters", loginRequired, async (req, res, next) => {
     });
 });
 
-
 //ToDo: merge with get "mesures/"
 /** @swagger
  * /mesures/popup:
- *   *   get:
- *     description: get all mesures in a specific Ti group by Post code
- *     produces:
- *       - application/json
- *     parameters:
- *       - in: query
- *         name: searchType
- *         description: filters mesures to apply to the list of mesures
- *         required: false
- *         schema:
- *           type: object
- *   responses:
- *       200:
- *         content:
- *           application/json:
- *             schema:
- *               type: array
+ *  get:
+ *    description: get all mesures in a specific Ti group by Post code
+ *    produces:
+ *      - application/json
+ *    parameters:
+ *      - in: query
+ *        name: searchType
+ *        description: filters mesures to apply to the list of mesures
+ *        required: false
+ *        schema:
+ *          type: object
+ *    responses:
+ *      200:
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
  */
 router.get("/popup", typeRequired("ti"), async (req, res, next) => {
   const ti = await getTiByUserId(req.user.id);
