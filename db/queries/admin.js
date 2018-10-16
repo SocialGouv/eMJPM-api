@@ -20,6 +20,23 @@ const getMandataires = ({ filters = {}, offset = 0, limit = 50 } = {}) =>
     .offset(offset)
     .limit(limit);
 
+
+const getTis = ({ filters = {}, offset = 0, limit = 50 } = {}) =>
+  knex("tis")
+    .select(
+      "users.id",
+      "users.type",
+      "users.active",
+      "users.created_at",
+      "users.last_login"
+    )
+    .innerjoin("users_tis", { "tis.user_id": "users.id" })
+    .join("users", { "mandataires.user_id": "users.id" })
+    .where(whitelist(filters, ALLOWED_FILTERS))
+    .offset(offset)
+    .limit(limit);
+
+
 const updateUser = ({ id, active }) => {
   if (typeof active === "undefined") {
     // skip if no data to update
