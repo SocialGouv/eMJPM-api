@@ -51,6 +51,12 @@ const USERS = [
     active: false
   },
   {
+    username: "ti2",
+    password: "ti2",
+    type: "ti",
+    active: false
+  },
+  {
     id: 42,
     username: "inactive2",
     password: "inactive2",
