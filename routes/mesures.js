@@ -169,6 +169,7 @@ router.get(
   typeRequired("ti"),
   async (req, res, next) => {
     const ti = await getTiByUserId(req.user.id);
+    console.log("getAllMesuresByTis", ti)
     if (!ti) {
       return next(new Error(401));
     }

@@ -19,9 +19,10 @@ const deleteMandataireTis = (tiId, mandataireId) =>
 const getTis = () => knex("tis");
 
 const getTiByUserId = userId =>
-  knex
-    .from("tis")
-    .where("user_id", parseInt(userId))
+  knex("tis")
+    .innerJoin("users_tis", "users_tis.ti_id", "tis.id")
+    .innerJoin("users", "users_tis.user_id", "users.id")
+    .where("users_tis.user_id", parseInt(userId))
     .first();
 
 module.exports = {
