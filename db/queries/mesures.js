@@ -15,7 +15,12 @@ const getAllMesuresByMandataires = ti_id =>
       "mandataire_tis.mandataire_id",
       "mandataires.id"
     )
-    .innerJoin("users", "mandataires.user_id", "users.id")
+    .innerJoin(
+      "users_mandataires",
+      "mandataires.id",
+      "users_mandataires.mandataire_id"
+    )
+    .innerJoin("users", " users_mandataires.user_id", "users.id")
     .where("mandataire_tis.ti_id", parseInt(ti_id))
     .select(
       "mesures.id",
@@ -58,7 +63,12 @@ const getAllMesuresByMandatairesFilter = (
       "mandataire_tis.mandataire_id",
       "mandataires.id"
     )
-    .innerJoin("users", "mandataires.user_id", "users.id")
+    .innerJoin(
+      "users_mandataires",
+      "mandataires.id",
+      "users_mandataires.mandataire_id"
+    )
+    .innerJoin("users", " users_mandataires.user_id", "users.id")
     .innerJoin(
       "geolocalisation_code_postal",
       "geolocalisation_code_postal.code_postal",
@@ -82,7 +92,12 @@ const getAllMesuresByMandatairesFilter = (
           "mandataire_tis.mandataire_id",
           "mandataires.id"
         )
-        .innerJoin("users", "mandataires.user_id", "users.id")
+        .innerJoin(
+          "users_mandataires",
+          "mandataires.id",
+          "users_mandataires.mandataire_id"
+        )
+        .innerJoin("users", " users_mandataires.user_id", "users.id")
         .innerJoin(
           "geolocalisation_code_postal",
           "geolocalisation_code_postal.code_postal",
@@ -196,7 +211,12 @@ const getMesuresByGeolocalisation = (ti_id, type) => {
       "mandataire_tis.mandataire_id",
       "mandataires.id"
     )
-    .innerJoin("users", "mandataires.user_id", "users.id")
+    .innerJoin(
+      "users_mandataires",
+      "mandataires.id",
+      "users_mandataires.mandataire_id"
+    )
+    .innerJoin("users", " users_mandataires.user_id", "users.id")
     .where(where)
     .groupByRaw(
       "mesures.code_postal,geolocalisation_code_postal.longitude,geolocalisation_code_postal.latitude,users.type"
@@ -216,7 +236,12 @@ const getAllMesuresByTis = ti_id =>
       "mandataire_tis.mandataire_id",
       "mandataires.id"
     )
-    .innerJoin("users", "mandataires.user_id", "users.id")
+    .innerJoin(
+      "users_mandataires",
+      "mandataires.id",
+      "users_mandataires.mandataire_id"
+    )
+    .innerJoin("users", " users_mandataires.user_id", "users.id")
     .where({
       "mandataire_tis.ti_id": parseInt(ti_id)
     });
@@ -244,7 +269,12 @@ const getAllMesuresByPopUpForMandataire = ti_id =>
       "mandataire_tis.mandataire_id",
       "mandataires.id"
     )
-    .innerJoin("users", "mandataires.user_id", "users.id")
+    .innerJoin(
+      "users_mandataires",
+      "mandataires.id",
+      "users_mandataires.mandataire_id"
+    )
+    .innerJoin("users", " users_mandataires.user_id", "users.id")
     .where({
       "mandataire_tis.ti_id": parseInt(ti_id),
       status: "Mesure en cours"

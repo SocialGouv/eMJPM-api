@@ -53,14 +53,19 @@ const getMandataire = filters =>
       "geolocalisation_code_postal.code_postal",
       "mandataires.code_postal"
     )
-    .innerJoin("users", "mandataires.user_id", "users.id")
+    .innerJoin(
+      "users_mandataires",
+      "mandataires.id",
+      "users_mandataires.mandataire_id"
+    )
+    .innerJoin("users", " users_mandataires.user_id", "users.id")
     .where(filters)
     .first();
 
 const getMandataireById = id => getMandataire({ "mandataires.id": id });
 
 const getMandataireByUserId = user_id =>
-  getMandataire({ "mandataires.user_id": parseInt(user_id) });
+  getMandataire({ "users_mandataires.user_id": parseInt(user_id) });
 
 const getMesuresMap = mandataireId =>
   knex("mesures")
@@ -117,7 +122,12 @@ function getAllByMandatairesFilter(
           longNorthEast
         ])
     )
-    .innerJoin("users", "users.id", "mandataires.user_id")
+    .innerJoin(
+      "users_mandataires",
+      "mandataires.id",
+      "users_mandataires.mandataire_id"
+    )
+    .innerJoin("users", " users_mandataires.user_id", "users.id")
     .innerJoin(
       "mandataire_tis",
       "mandataire_tis.mandataire_id",
@@ -138,7 +148,12 @@ const getAllMandataires = ti_id =>
     .from("mandataire_tis")
     .where("ti_id", parseInt(ti_id))
     .innerJoin("mandataires", "mandataire_tis.mandataire_id", "mandataires.id")
-    .innerJoin("users", "mandataires.user_id", "users.id")
+    .innerJoin(
+      "users_mandataires",
+      "mandataires.id",
+      "users_mandataires.mandataire_id"
+    )
+    .innerJoin("users", " users_mandataires.user_id", "users.id")
     .select(
       knex.raw("distinct mandataires.*,users.type"),
       knex.raw("COALESCE(geolocalisation_code_postal.latitude, 0) as latitude"),
@@ -182,7 +197,12 @@ const getSpecificMandataire = data =>
   knex
     .from("mandataires")
     .where(data)
-    .innerJoin("users", "mandataires.user_id", "users.id")
+    .innerJoin(
+      "users_mandataires",
+      "mandataires.id",
+      "users_mandataires.mandataire_id"
+    )
+    .innerJoin("users", " users_mandataires.user_id", "users.id")
     .first();
 
 const getSpecificMandataireByToken = data =>
@@ -193,6 +213,7 @@ const getSpecificMandataireByToken = data =>
     .first();
 
 module.exports = {
+  Mandataires,
   updateCountMesures,
   updateDateMesureUpdate,
   getMandataireById,
