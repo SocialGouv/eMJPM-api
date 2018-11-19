@@ -122,13 +122,14 @@ router.get("/mandataires", typeRequired("admin"), async (req, res, next) => {
  *       - application/json
  *     parameters:
  *       - in: query
- *         name: query
+ *         name: users.active
  *         description: filters to apply to the list. ex `?users.active=true`
  *         required: false
  *         schema:
  *           type: object
  *     responses:
  *       200:
+ *         description: return list of users of Ti for admin
  *         content:
  *           application/json:
  *             schema:

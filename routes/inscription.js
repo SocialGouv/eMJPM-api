@@ -251,7 +251,6 @@ router.post("/mandataires", (req, res, next) => {
       return inscriptionEmail(`${process.env.APP_URL}/admin`);
     })
     .then(() => {
-      // todo: send email admins ?
       return res.json({ success: true });
     })
     .catch(e => {
@@ -319,7 +318,9 @@ router.post("/tis", (req, res, next) => {
         })
     )
     .then(() => {
-      // todo: send email admins ?
+      return inscriptionEmail(`${process.env.APP_URL}/admin`);
+    })
+    .then(() => {
       return res.json({ success: true });
     })
     .catch(e => {

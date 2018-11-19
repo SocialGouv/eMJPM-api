@@ -114,7 +114,7 @@ const bulk = ({ mesures, mandataire_id }) => {
   });
 };
 
-//TODO : see where it was used and rm if necessary
+//TODO(Adrien) : see where it was used and rm if necessary
 // async function getAllMesuresByMandatairesFilter(
 //     ti_id,
 //     latnorthEast,
