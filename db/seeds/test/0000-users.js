@@ -64,6 +64,14 @@ const USERS = [
     active: false
   },
   {
+    id: 32,
+    username: "titest",
+    password: "titest",
+    type: "ti",
+    reset_password_token: "LpWpzK4Jla9I87Aq",
+    active: false
+  },
+  {
     id: 52,
     username: "ad",
     password: "ad123",

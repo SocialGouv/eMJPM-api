@@ -154,7 +154,7 @@ describe("routes : inscription", () => {
     it("should add user tis", () =>
       chai
         .request(server)
-        .post("/api/v1/inscription/mandataires")
+        .post("/api/v1/inscription/tis")
         .send({
           username: "user_ti",
           email: "test@test.com",
@@ -175,7 +175,7 @@ describe("routes : inscription", () => {
           user.username.should.equal("user_ti");
           const users_tis = await knex
             .table("users_tis")
-            .where("id", user.id)
+            .where("user_id", user.id)
             .first();
           users_tis.cabinet.should.equal("2A");
           users_tis.ti_id.should.equal(1);
