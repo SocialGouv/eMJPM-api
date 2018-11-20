@@ -93,6 +93,8 @@ describe("routes : /admin", () => {
           .then(res => {
             res.status.should.equal(200);
             res.body.length.should.equal(2);
+            res.body[0].id.should.equal(5);
+            res.body[1].id.should.equal(32);
           })
       ));
     it("should filter list of user Ti", () =>
@@ -106,6 +108,7 @@ describe("routes : /admin", () => {
           .then(res => {
             res.status.should.equal(200);
             res.body.length.should.equal(1);
+            res.body[0].id.should.equal(32);
           })
       ));
   });

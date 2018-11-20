@@ -248,7 +248,7 @@ router.post("/mandataires", (req, res, next) => {
         })
     )
     .then(() => {
-      return inscriptionEmail(`${process.env.APP_URL}/admin`);
+      return inscriptionEmail(`${process.env.APP_URL}`);
     })
     .then(() => {
       return res.json({ success: true });
@@ -318,7 +318,7 @@ router.post("/tis", (req, res, next) => {
         })
     )
     .then(() => {
-      return inscriptionEmail(`${process.env.APP_URL}/admin`);
+      return inscriptionEmail(`${process.env.APP_URL}`);
     })
     .then(() => {
       return res.json({ success: true });
