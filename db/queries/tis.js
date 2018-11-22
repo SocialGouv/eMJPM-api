@@ -41,13 +41,9 @@ const getTiByUserIdWithCodePostal = userId =>
       "tis.id",
       "geolocalisation_code_postal.latitude",
       "geolocalisation_code_postal.longitude",
-      "users_tis.cabinet",
-      "users_tis.email",
-      "users.type",
-      "users.last_login",
-      "users.active",
-      "users.reset_password_token",
-      "users.reset_password_expires"
+      //for test
+      "tis.code_postal",
+      "tis.telephone"
     )
     .innerJoin("users_tis", "users_tis.ti_id", "tis.id")
     .innerJoin("users", "users_tis.user_id", "users.id")
