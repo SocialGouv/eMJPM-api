@@ -4,8 +4,6 @@ var router = express.Router();
 const { loginRequired, typeRequired } = require("../auth/_helpers");
 const { getTiByUserIdWithCodePostal } = require("../db/queries/tis");
 
-// TODO:  Security for mandataire
-
 /** @swagger
  * /usersTi
  *   get:
@@ -14,14 +12,6 @@ const { getTiByUserIdWithCodePostal } = require("../db/queries/tis");
  *     description: get ti information
  *     produces:
  *       - application/json
- *     responses:
- *       200:
- *         content:
- *           application/json:
- *             schema:
- *               type: Object
- *               items:
- *                 type: object
  */
 
 router.get("/", loginRequired, typeRequired("ti"), async (req, res, next) => {
@@ -34,7 +24,6 @@ router.get("/", loginRequired, typeRequired("ti"), async (req, res, next) => {
     })
     .catch(function(error) {
       throw error;
-      next(error);
     });
 });
 
