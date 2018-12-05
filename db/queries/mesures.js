@@ -223,7 +223,8 @@ const getAllMesuresByTis = ti_id =>
     .innerJoin("users", "mandataires.user_id", "users.id")
     .where({
       "mandataire_tis.ti_id": parseInt(ti_id),
-      "users.active": true
+      "users.active": true,
+      "mesures.status": "Mesure en attente"
     });
 
 const getAllMesuresByPopUpForMandataire = ti_id =>
@@ -287,6 +288,15 @@ const getAllMesuresEteinte = mandataireID =>
     status: "Eteindre mesure"
   });
 
+const getAllMesuresEnAttenteByServices = () =>
+  knex
+    .from("mesures")
+    .where("status", "Mesure en attente")
+    .innerJoin("mandataires", "mandataires.id", "mesures.mandataire_id")
+    .innerJoin("users", "mandataires.user_id", "users.id")
+    .where({ "users.type": "service", "users.active": true })
+    .select("mesures.id", "mesures.status", "users.type", "mesures.created_at");
+
 module.exports = {
   getAllMesuresByMandataires,
   getAllMesuresByMandatairesFilter,
@@ -298,5 +308,6 @@ module.exports = {
   getAllMesuresAttente,
   getMesuresEnCoursMandataire,
   addMesure,
-  bulk
+  bulk,
+  getAllMesuresEnAttenteByServices
 };
