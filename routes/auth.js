@@ -10,7 +10,6 @@ const passport = require("../auth/local");
 const { updateLastLogin, updateUser } = require("../db/queries/users");
 const {
   getSpecificMandataire,
-  getMandataireById,
   getSpecificUserByToken
 } = require("../db/queries/mandataires");
 
