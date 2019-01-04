@@ -11,7 +11,7 @@ const { updateLastLogin, updateUser } = require("../db/queries/users");
 const {
   getSpecificMandataire,
   getMandataireById,
-  getSpecificMandataireByToken
+  getSpecificUserByToken
 } = require("../db/queries/mandataires");
 
 const { addDataLogs } = require("../db/queries/logsData");
@@ -224,7 +224,7 @@ router.post("/forgot_password", (req, res, next) => {
  *             description: API server cookie
  */
 router.post("/reset_password", (req, res, next) => {
-  getSpecificMandataireByToken({ reset_password_token: req.body.token })
+  getSpecificUserByToken({ reset_password_token: req.body.token })
     .catch(res => {
       res.status(400).send({
         message: "Votre lien a expiré."
@@ -242,11 +242,9 @@ router.post("/reset_password", (req, res, next) => {
           password: bcrypt.hashSync(req.body.newPassword, 10),
           reset_password_token: undefined,
           reset_password_expires: undefined
-        })
-          .then(id => getMandataireById(id))
-          .then(mandataire => {
-            return confirmationPasswordEmail(mandataire.email);
-          });
+        }).then(() => {
+          return confirmationPasswordEmail(user.email);
+        });
       } else {
         return res.status(400).send({
           message: "Vos mots de passe ne sont pas équivalents."
