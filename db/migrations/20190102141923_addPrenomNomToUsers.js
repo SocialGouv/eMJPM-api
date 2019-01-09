@@ -12,7 +12,7 @@ exports.up = function(knex, Promise) {
       table.string("nom");
       table.string("prenom");
       table.string("cabinet");
-      table.string("email");
+      table.string("email").unique();
     })
     .then(() =>
       mandataires.then(mandataires =>
