@@ -1,4 +1,3 @@
-
 exports.up = function(knex, Promise) {
   const userTisAll = knex("users_tis");
   const mandataires = knex("mandataires");
@@ -55,14 +54,47 @@ exports.up = function(knex, Promise) {
             .then(() => console.log("hello"));
         })
       )
-    );
+    )
+    .then(() =>
+      knex.schema.alterTable("users_tis", function(table) {
+        table.dropColumn("prenom");
+        table.dropColumn("nom");
+        table.dropColumn("email");
+        table.dropColumn("cabinet");
+      })
+    )
+    .then(() =>
+      knex.schema.alterTable("mandataires", function(table) {
+        table.dropColumn("prenom");
+        table.dropColumn("nom");
+        table.dropColumn("email");
+      })
+    )
+    .then(() => knex.schema.renameTable("users_tis", "user_tis"))
+    .then(() => knex.schema.dropTable("mandataire_tis"));
 };
 
 exports.down = function(knex, Promise) {
-  return knex.schema.alterTable("users", function(table) {
-    table.dropColumn("nom");
-    table.dropColumn("prenom");
-    table.string("cabinet");
-    table.string("email");
-  });
+  return knex.schema
+    .alterTable("users", function(table) {
+      table.dropColumn("nom");
+      table.dropColumn("prenom");
+      table.string("cabinet");
+      table.string("email");
+    })
+    .then(() => knex.schema.renameTable("user_tis", "users_tis"))
+    .then(() =>
+      knex.schema.createTable("mandataire_tis", function(table) {
+        table.increments("id").primary();
+        table
+          .integer("ti_id")
+          .references("id")
+          .inTable("tis");
+        table
+          .integer("mandataire_id")
+          .references("id")
+          .inTable("mandataires");
+        table.dateTime("created_at");
+      })
+    );
 };
