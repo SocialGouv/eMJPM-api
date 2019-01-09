@@ -16,43 +16,45 @@ exports.up = function(knex, Promise) {
     })
     .then(() =>
       mandataires.then(mandataires =>
-        mandataires.map(mandataire => {
-          knex("users")
-            .where("users.id", mandataire.user_id)
-            .update({
-              prenom: mandataire.prenom,
-              nom: mandataire.nom,
-              email: mandataire.email
-            })
-            .then(() => console.log("hello"));
-        })
+        Promise.all(
+          mandataires.map(mandataire =>
+            knex("users")
+              .where("users.id", mandataire.user_id)
+              .update({
+                prenom: mandataire.prenom,
+                nom: mandataire.nom,
+                email: mandataire.email
+              })
+          )
+        )
       )
     )
     .then(() =>
       userTisAll.then(userTis =>
-        userTis.map(userTi => {
-          return knex("users")
-            .where("users.id", userTi.user_id)
-            .update({
-              prenom: userTi.prenom,
-              nom: userTi.nom,
-              email: userTi.email,
-              cabinet: userTi.cabinet
-            })
-            .then(() => console.log("hello"));
-        })
+        Promise.all(
+          userTis.map(userTi =>
+            knex("users")
+              .where("users.id", userTi.user_id)
+              .update({
+                prenom: userTi.prenom,
+                nom: userTi.nom,
+                email: userTi.email,
+                cabinet: userTi.cabinet
+              })
+          )
+        )
       )
     )
     .then(() =>
       mandataireTis.then(mandatairesTis =>
-        mandatairesTis.map(mandatairesTi => {
-          return knex("users_tis")
-            .insert({
+        Promise.all(
+          mandatairesTis.map(mandatairesTi =>
+            knex("users_tis").insert({
               ti_id: mandatairesTi.ti_id,
               user_id: mandatairesTi.user_id
             })
-            .then(() => console.log("hello"));
-        })
+          )
+        )
       )
     )
     .then(() =>
@@ -61,6 +63,7 @@ exports.up = function(knex, Promise) {
         table.dropColumn("nom");
         table.dropColumn("email");
         table.dropColumn("cabinet");
+        table.renameColumn("creates_at", "created_at");
       })
     )
     .then(() =>
