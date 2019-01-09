@@ -79,8 +79,8 @@ exports.down = function(knex, Promise) {
     .alterTable("users", function(table) {
       table.dropColumn("nom");
       table.dropColumn("prenom");
-      table.string("cabinet");
-      table.string("email");
+      table.dropColumn("cabinet");
+      table.dropColumn("email");
     })
     .then(() => knex.schema.renameTable("user_tis", "users_tis"))
     .then(() =>
