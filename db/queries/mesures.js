@@ -288,6 +288,15 @@ const getAllMesuresEteinte = mandataireID =>
     status: "Eteindre mesure"
   });
 
+const getAllMesuresEnAttenteByServices = () =>
+  knex
+    .from("mesures")
+    .where("status", "Mesure en attente")
+    .innerJoin("mandataires", "mandataires.id", "mesures.mandataire_id")
+    .innerJoin("users", "mandataires.user_id", "users.id")
+    .where({ "users.type": "service", "users.active": true })
+    .select("mesures.id", "mesures.status", "users.type", "mesures.created_at");
+
 module.exports = {
   getAllMesuresByMandataires,
   getAllMesuresByMandatairesFilter,
@@ -299,5 +308,6 @@ module.exports = {
   getAllMesuresAttente,
   getMesuresEnCoursMandataire,
   addMesure,
-  bulk
+  bulk,
+  getAllMesuresEnAttenteByServices
 };
