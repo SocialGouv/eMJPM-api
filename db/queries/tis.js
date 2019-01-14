@@ -28,7 +28,10 @@ const addMandataireTis = (ti_id, mandataire_id) =>
 const deleteMandataireTis = (tiId, mandataireId) =>
   knex("user_tis")
     .innerJoin("mandataires", "mandataires.user_id", "user_tis.user_id")
-    .where({ ti_id: parseInt(tiId), "mandataires.id": parseInt(mandataireId) })
+    .where({
+      ti_id: parseInt(tiId),
+      user_id: findUserbymandataire(parseInt(mandataireId))
+    })
     .first()
     .del();
 
