@@ -31,7 +31,7 @@ describe("routes : mesures", () => {
   describe("GET /api/v1/mesures", () => {
     shouldBeProtected(server, "GET", "/api/v1/mesures");
 
-    it.only("ti should get list of mesures by mandataires", () =>
+    it("ti should get list of mesures by mandataires", () =>
       logUser(server, {
         username: "ti1",
         password: "ti1"
