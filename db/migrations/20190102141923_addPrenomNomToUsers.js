@@ -87,6 +87,15 @@ exports.down = function(knex, Promise) {
     })
     .then(() => knex.schema.renameTable("user_tis", "users_tis"))
     .then(() =>
+      knex.schema.alterTable("users_tis", function(table) {
+        table.string("nom");
+        table.string("prenom");
+        table.string("cabinet");
+        table.string("email");
+      })
+    )
+
+    .then(() =>
       knex.schema.createTable("mandataire_tis", function(table) {
         table.increments("id").primary();
         table
