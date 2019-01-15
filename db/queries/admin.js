@@ -35,7 +35,9 @@ const getTis = ({ filters = {}, offset = 0, limit = 50 } = {}) =>
       "users.last_login"
     )
     .join("user_tis", { "user_tis.user_id": "users.id" })
+    .where({ "users.type": "ti" })
     .where(whitelist(filters, ALLOWED_FILTERS))
+    .orderBy("id")
     .offset(offset)
     .limit(limit);
 
