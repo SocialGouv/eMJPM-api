@@ -12,7 +12,7 @@ const getAllMesuresByMandataires = ti_id =>
     )
     .innerJoin("users", "mandataires.user_id", "users.id")
     .innerJoin("user_tis", "user_tis.user_id", "users.id")
-    .where({ "user_ti.ti_id": parseInt(ti_id), "users.active": true })
+    .where({ "user_tis.ti_id": parseInt(ti_id), "users.active": true })
     .select(
       "mesures.id",
       "mesures.code_postal",
