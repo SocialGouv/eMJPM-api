@@ -31,7 +31,7 @@ const isMandataireInTi = (mandataire_id, ti_id) =>
     )
     .innerJoin("mandataires", "mandataires.user_id", "user_tis.user_id")
     .where({
-      id: mandataire_id,
+      "mandataires.id": mandataire_id,
       ti_id
     })
     .then(res => res.length > 0);
