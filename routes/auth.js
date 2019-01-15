@@ -237,7 +237,7 @@ router.post("/reset_password", (req, res, next) => {
         });
       }
       if (req.body.newPassword === req.body.verifyPassword) {
-        return updateUser(user.user_id, {
+        return updateUser(user.id, {
           password: bcrypt.hashSync(req.body.newPassword, 10),
           reset_password_token: undefined,
           reset_password_expires: undefined
