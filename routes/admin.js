@@ -188,4 +188,27 @@ router.put("/user/:userId", typeRequired("admin"), async (req, res, next) => {
     });
 });
 
+router.delete(
+  "/mandataires/:mandataireId",
+  typeRequired("admin"),
+  async (req, res, next) => {
+    // secu : ensure TI can write on this mandataire + add related test
+    const userId = knex("mandataires")
+      .select("mandataires.user_id")
+      .where("mandataires.id", mandataireId)
+      .first();
+    queries
+      .deleteUser(userId, mandataireId)
+      .then(function() {
+        return getMandataires(req.params.body);
+      })
+      .then(function(users) {
+        res.status(200).json(users);
+      })
+      .catch(function(error) {
+        next(error);
+      });
+  }
+);
+
 module.exports = router;
