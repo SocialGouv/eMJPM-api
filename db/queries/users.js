@@ -25,9 +25,19 @@ const getSpecificUser = data =>
     .where(data)
     .first();
 
+const deleteUserTI = userId => {
+  knex("user_tis")
+    .where("user_id", userId)
+    .del();
+  knex("users")
+    .where("user_id", userId)
+    .del();
+};
+
 module.exports = {
   updateLastLogin,
   updateUser,
   user,
-  getSpecificUser
+  getSpecificUser,
+  deleteUserTI
 };

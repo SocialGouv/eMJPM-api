@@ -105,17 +105,33 @@ const { reservationEmail } = require("../email/reservation-email");
  */
 router.put(
   "/:mandataireId/mesures/:mesureId",
-  typeRequired("individuel", "prepose"),
+  typeRequired("individuel", "prepose", "ti"),
   async (req, res, next) => {
     const mandataire = await getMandataireByUserId(req.user.id);
-    updateMesure(
-      {
-        id: req.params.mesureId,
-        // ⚠️ ensure to override a mandataire only
-        mandataire_id: mandataire.id
-      },
-      req.body
-    )
+    const ti = await getTiByUserId(req.user.id);
+    const body = {
+      ...req.body
+    };
+    if (req.user.type === "individuel" || req.user.type === "prepose") {
+      body["mandataire_id"] = mandataire.id;
+    }
+    const where = () => {
+      if (req.user.type === "individuel" || req.user.type === "prepose") {
+        return {
+          id: req.params.mesureId,
+          // ⚠️ ensure to override a mandataire only
+          mandataire_id: mandataire.id
+        };
+      } else {
+        return {
+          id: req.params.mesureId
+        };
+      }
+    };
+
+    delete body["manda"];
+    console.log("body", body);
+    updateMesure(where, body)
       //.then(() => queries.getMesuresEnCoursMandataire(mandataire.id))
       // todo : trigger/view
       //.then(() => updateDateMesureUpdate(mandataire.id))
