@@ -7,8 +7,6 @@ const { typeRequired } = require("../auth/_helpers");
 
 const { deleteUserTI } = require("../db/queries/users");
 
-const { deleteUserTI } = require("../db/queries/users");
-
 // router.get("/index_users", function(req, res, next) {
 //   queries
 //     .getAllUsers()
