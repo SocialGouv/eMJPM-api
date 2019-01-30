@@ -3,6 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 const { loginRequired } = require("../auth/_helpers");
+const { typeRequired } = require("../auth/_helpers");
+
 
 const {
   getMandataireById,

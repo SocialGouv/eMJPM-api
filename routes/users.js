@@ -3,6 +3,7 @@ const router = express.Router();
 //const queries = require("../db/queries");
 
 const authHelpers = require("../auth/_helpers");
+const { typeRequired } = require("../auth/_helpers");
 
 const { deleteUserTI } = require("../db/queries/users");
 
