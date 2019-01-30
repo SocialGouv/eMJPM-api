@@ -14,7 +14,8 @@ const {
   getAllServicesByTis,
   getAllMandataires,
   getAllByMandatairesFilter,
-  getCoordonneesByPostCode
+  getCoordonneesByPostCoden,
+  deleteUserMandataire
 } = require("../db/queries/mandataires");
 
 const { updateUser } = require("../db/queries/users");
@@ -443,6 +444,29 @@ router.put(
     update(req.body.mandataire_id, { mesures_en_attente: nbMesureAttente })
       .then(mandataire => res.status(200).json(mandataire))
       .catch(error => next(error));
+  }
+);
+
+router.delete(
+  "/:mandataireId",
+  typeRequired("admin"),
+  async (req, res, next) => {
+    // secu : ensure TI can write on this mandataire + add related test
+    const userId = knex("mandataires")
+      .select("mandataires.user_id")
+      .where("mandataires.id", mandataireId)
+      .first();
+
+    deleteUserMandataire(userId, mandataireId)
+      .then(function() {
+        return getMandataires(req.params.body);
+      })
+      .then(function(users) {
+        res.status(200).json(users);
+      })
+      .catch(function(error) {
+        next(error);
+      });
   }
 );
 

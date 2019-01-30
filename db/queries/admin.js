@@ -21,7 +21,7 @@ const getMandataires = ({ filters = {}, offset = 0, limit = 50 } = {}) =>
     .offset(offset)
     .limit(limit);
 
-const deleteUser = (userId ,mandataireId)  => {
+const deleteUserMandataire = (userId, mandataireId) => {
   knex("commentaires")
     .where("mandataire_id", mandataireId)
     .del();
@@ -73,5 +73,5 @@ module.exports = {
   getMandataires,
   updateUser,
   getTis,
-  deleteUser
+  deleteUserMandataire
 };
