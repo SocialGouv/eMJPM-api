@@ -19,10 +19,12 @@ const user = id =>
     .where({ "users.id": id })
     .first();
 
-const getSpecificUser = data =>
-  knex
-    .from("users")
-    .where(data)
+const getSpecificUser = data => knex.from("users").where(data);
+
+const getNumberOfUsersByEmail = email =>
+  knex("users")
+    .count("id")
+    .where("email", email)
     .first();
 
 const deleteUserTI = userId => {
@@ -39,5 +41,6 @@ module.exports = {
   updateUser,
   user,
   getSpecificUser,
-  deleteUserTI
+  deleteUserTI,
+  getNumberOfUsersByEmail
 };
