@@ -186,24 +186,6 @@ const getCoordonneesByPostCode = userId =>
     .where("code_postal", userId)
     .first();
 
-const deleteUserMandataire = (userId, mandataireId) => {
-  knex("commentaires")
-    .where("mandataire_id", mandataireId)
-    .del();
-  knex("mesures")
-    .where("mandataire_id", mandataireId)
-    .del();
-  knex("user_tis")
-    .where("user_id", userId)
-    .del();
-  knex("mandataires")
-    .where("user_id", userId)
-    .del();
-  knex("users")
-    .where("user_id", userId)
-    .del();
-};
-
 module.exports = {
   updateCountMesures,
   updateDateMesureUpdate,
@@ -216,6 +198,5 @@ module.exports = {
   getAllMandataires,
   getAllByMandatairesFilter,
   update,
-  getCoordonneesByPostCode,
-  deleteUserMandataire
+  getCoordonneesByPostCode
 };
