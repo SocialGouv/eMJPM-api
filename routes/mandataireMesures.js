@@ -2,6 +2,25 @@ const express = require("express");
 
 const router = express.Router();
 const { typeRequired } = require("../auth/_helpers");
+const whitelist = require("../db/queries/whitelist");
+
+const { getAllMesuresByTis } = require("../db/queries/mesures");
+
+const ALLOWED_FILTERS = [
+  "code_postal",
+  "ville",
+  "etablissement",
+  "mandataire_id",
+  "annee",
+  "type",
+  "date_ouverture",
+  "residence",
+  "civilite",
+  "status",
+  "ti_id",
+  "cabinet",
+  "id"
+];
 
 const {
   updateCountMesures,
@@ -107,39 +126,48 @@ router.put(
   "/:mandataireId/mesures/:mesureId",
   typeRequired("individuel", "prepose", "ti"),
   async (req, res, next) => {
-    const mandataire = await getMandataireByUserId(req.user.id);
-    const ti = await getTiByUserId(req.user.id);
-    const body = {
-      ...req.body
-    };
-    if (req.user.type === "individuel" || req.user.type === "prepose") {
-      body["mandataire_id"] = mandataire.id;
-    }
-    const where = () => {
-      if (req.user.type === "individuel" || req.user.type === "prepose") {
-        return {
-          id: req.params.mesureId,
-          // ⚠️ ensure to override a mandataire only
-          mandataire_id: mandataire.id
-        };
-      } else {
-        return {
-          id: req.params.mesureId
-        };
-      }
-    };
 
-    delete body["manda"];
-    console.log("body", body);
-    updateMesure(where, body)
-      //.then(() => queries.getMesuresEnCoursMandataire(mandataire.id))
-      // todo : trigger/view
-      //.then(() => updateDateMesureUpdate(mandataire.id))
-      // todo : trigger/view
-      .then(() => updateCountMesures(mandataire.id))
-      .then(() => getMesuresEnCoursMandataire(mandataire.id))
-      .then(mesures => res.status(200).json(mesures))
-      .catch(error => next(error));
+    // const mandataire = await (req.user.type === "individuel" ||
+    // req.user.type === "prepose"
+    //   ? getMandataireByUserId(req.user.id)
+    //   : getMandataireByUserId(req.body.id));
+
+    if (req.user.type === "individuel" || req.user.type === "prepose") {
+      updateMesure(
+        {
+          id: req.params.mesureId
+          // ⚠️ ensure to override a mandataire only
+          // mandataire_id: mandataire.id
+        },
+        whitelist(req.body, ALLOWED_FILTERS)
+      )
+        //.then(() => queries.getMesuresEnCoursMandataire(mandataire.id))
+        // todo : trigger/view
+        //.then(() => updateDateMesureUpdate(mandataire.id))
+        // todo : trigger/view
+        .then(() => updateCountMesures(mandataire.id))
+        .then(() => getMesuresEnCoursMandataire(mandataire.id))
+        .then(mesures => res.status(200).json(mesures))
+        .catch(error => next(error));
+    } else {
+      updateMesure(
+        {
+          id: req.params.mesureId
+          // ⚠️ ensure to override a mandataire only
+          // mandataire_id: mandataire.id
+        },
+        whitelist(req.body, ALLOWED_FILTERS)
+      )
+        .then(() => getAllMesuresByTis(req.body.ti_id))
+        .then(function(mesures) {
+          res.status(200).json(mesures);
+        })
+        .catch(function(error) {
+          console.log(error);
+          throw error;
+          next(error);
+        });
+    }
   }
 );
 
