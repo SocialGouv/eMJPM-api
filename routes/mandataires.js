@@ -5,6 +5,7 @@ const router = express.Router();
 const { loginRequired } = require("../auth/_helpers");
 const { typeRequired } = require("../auth/_helpers");
 
+const multer = require("multer");
 
 const {
   getMandataireById,
@@ -180,7 +181,7 @@ router.put("/1", loginRequired, async (req, res, next) => {
     etablissement,
     mesures_en_cours,
     nb_secretariat,
-    type,
+    type
   } = req.body;
 
   const mandataire = await getMandataireByUserId(req.user.id);
@@ -206,7 +207,8 @@ router.put("/1", loginRequired, async (req, res, next) => {
     zip,
     etablissement,
     mesures_en_cours,
-    nb_secretariat})
+    nb_secretariat
+  })
     .then(() =>
       updateUser(req.user.id, {
         nom,
@@ -471,6 +473,43 @@ router.delete(
       });
   }
 );
+
+var storage = multer.diskStorage({
+  destination: function(req, file, callback) {
+    callback(null, "./uploads");
+  },
+  filename: function(req, file, callback) {
+    callback(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  }
+});
+
+router.post("/upload", typeRequired("individuel, preprose,service"), function(
+  req,
+  res
+) {
+  var upload = multer({
+    storage: storage,
+    limits: { fileSize: 1000000 },
+    fileFilter: function(req, file, callback) {
+      var ext = path.extname(file.originalname);
+      if (
+        ext !== ".png" &&
+        ext !== ".jpg" &&
+        ext !== ".gif" &&
+        ext !== ".jpeg"
+      ) {
+        return callback(res.end("Only images are allowed"), null);
+      }
+      callback(null, true);
+    }
+  }).single("userFile");
+  upload(req, res, function(err) {
+    res.end("File is uploaded");
+  });
+});
 
 router.use("/", require("./commentaires"));
 router.use("/", require("./mandataireMesures"));
