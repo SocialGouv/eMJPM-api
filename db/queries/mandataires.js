@@ -186,19 +186,6 @@ const getCoordonneesByPostCode = userId =>
     .where("code_postal", userId)
     .first();
 
-const getSpecificMandataire = data =>
-  knex
-    .from("mandataires")
-    .where(data)
-    .innerJoin("users", "mandataires.user_id", "users.id")
-    .first();
-
-const getSpecificUserByToken = data =>
-  knex
-    .from("users")
-    .where(data)
-    .first();
-
 module.exports = {
   updateCountMesures,
   updateDateMesureUpdate,
@@ -211,7 +198,5 @@ module.exports = {
   getAllMandataires,
   getAllByMandatairesFilter,
   update,
-  getCoordonneesByPostCode,
-  getSpecificMandataire,
-  getSpecificUserByToken
+  getCoordonneesByPostCode
 };

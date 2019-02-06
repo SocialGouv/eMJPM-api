@@ -7,11 +7,11 @@ const uid = require("rand-token").uid;
 const authHelpers = require("../auth/_helpers");
 const passport = require("../auth/local");
 
-const { updateLastLogin, updateUser } = require("../db/queries/users");
 const {
-  getSpecificMandataire,
-  getSpecificUserByToken
-} = require("../db/queries/mandataires");
+  updateLastLogin,
+  updateUser,
+  getSpecificUser
+} = require("../db/queries/users");
 
 const { addDataLogs } = require("../db/queries/logsData");
 const { resetPasswordEmail } = require("../email/password-reset");
@@ -168,12 +168,12 @@ router.post("/forgot_password", (req, res, next) => {
   const email = req.body.email;
   const token = uid(16);
 
-  getSpecificMandataire({ email: email })
+  getSpecificUser({ email: email })
     .then(user => {
       if (!user) {
         throw new Error("user not found");
       }
-      return updateUser(user.user_id, {
+      return updateUser(user.id, {
         reset_password_token: token,
         reset_password_expires: Date.now() + 7200000
       });
@@ -223,7 +223,7 @@ router.post("/forgot_password", (req, res, next) => {
  *             description: API server cookie
  */
 router.post("/reset_password", (req, res, next) => {
-  getSpecificUserByToken({ reset_password_token: req.body.token })
+  getSpecificUser({ reset_password_token: req.body.token })
     .catch(res => {
       res.status(400).send({
         message: "Votre lien a expiré."

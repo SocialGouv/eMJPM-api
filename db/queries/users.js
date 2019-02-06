@@ -19,8 +19,15 @@ const user = id =>
     .where({ "users.id": id })
     .first();
 
+const getSpecificUser = data =>
+  knex
+    .from("users")
+    .where(data)
+    .first();
+
 module.exports = {
   updateLastLogin,
   updateUser,
-  user
+  user,
+  getSpecificUser
 };
