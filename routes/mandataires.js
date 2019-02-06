@@ -181,7 +181,7 @@ router.put("/1", loginRequired, async (req, res, next) => {
     etablissement,
     mesures_en_cours,
     nb_secretariat,
-    type,
+    type
   } = req.body;
 
   const mandataire = await getMandataireByUserId(req.user.id);
@@ -486,11 +486,13 @@ var storage = multer.diskStorage({
   }
 });
 
-router.post("/upload", function(req, res) {
-  console.log("ad", req.body)
+router.post("/upload", typeRequired("individuel, preprose,service"), function(
+  req,
+  res
+) {
   var upload = multer({
     storage: storage,
-    limits:{fileSize: 1000000},
+    limits: { fileSize: 1000000 },
     fileFilter: function(req, file, callback) {
       var ext = path.extname(file.originalname);
       if (
