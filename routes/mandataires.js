@@ -177,13 +177,7 @@ router.put("/1", loginRequired, async (req, res, next) => {
     etablissement,
     mesures_en_cours,
     nb_secretariat,
-    created_at,
-    date_mesure_update,
-    email_send,
-    mesures_en_attente,
     type,
-    latitude,
-    longitude
   } = req.body;
 
   const mandataire = await getMandataireByUserId(req.user.id);
