@@ -4,7 +4,6 @@ const router = express.Router();
 
 router.use("/mandataires", require("./mandataires"));
 router.use("/usersTi", require("./usersTi"));
-router.use("/codePostaux", require("./codePostaux"));
 
 router.use("/auth", require("./auth"));
 router.use("/mesures", require("./mesures"));
