@@ -19,9 +19,40 @@ const deleteMandataireTis = (tiId, mandataireId) =>
 const getTis = () => knex("tis");
 
 const getTiByUserId = userId =>
-  knex
-    .from("tis")
-    .where("user_id", parseInt(userId))
+  knex("tis")
+    .select(
+      "tis.*",
+      "users_tis.cabinet",
+      "users_tis.email",
+      "users.type",
+      "users.last_login",
+      "users.active",
+      "users.reset_password_token",
+      "users.reset_password_expires"
+    )
+    .innerJoin("users_tis", "users_tis.ti_id", "tis.id")
+    .innerJoin("users", "users_tis.user_id", "users.id")
+    .where("users_tis.user_id", parseInt(userId))
+    .first();
+
+const getTiByUserIdWithCodePostal = userId =>
+  knex("tis")
+    .select(
+      "tis.id",
+      "geolocalisation_code_postal.latitude",
+      "geolocalisation_code_postal.longitude",
+      //for test
+      "tis.code_postal",
+      "tis.telephone"
+    )
+    .innerJoin("users_tis", "users_tis.ti_id", "tis.id")
+    .innerJoin("users", "users_tis.user_id", "users.id")
+    .innerJoin(
+      "geolocalisation_code_postal",
+      "geolocalisation_code_postal.code_postal",
+      "tis.code_postal"
+    )
+    .where("users_tis.user_id", parseInt(userId))
     .first();
 
 module.exports = {
@@ -29,5 +60,6 @@ module.exports = {
   addMandataireTis,
   deleteMandataireTis,
   getTis,
-  getTiByUserId
+  getTiByUserId,
+  getTiByUserIdWithCodePostal
 };

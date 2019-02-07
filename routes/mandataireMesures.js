@@ -19,6 +19,8 @@ const {
   addMesure
 } = require("../db/queries/mesures");
 
+const { reservationEmail } = require("../email/reservation-email");
+
 /**
  * @swagger
  *
@@ -161,8 +163,10 @@ router.post(
     }
     if (req.user.type === "ti") {
       body["ti_id"] = ti.id;
+      body["cabinet"] = ti.cabinet;
       addMesure(body)
-        .then(mesures => res.status(200).json({ success: true }))
+        .then(() => reservationEmail(ti, req.body.mandataire_id, req.body))
+        .then(() => res.status(200).json({ success: true }))
         .catch(error => {
           console.log(error);
           next(error);
@@ -236,7 +240,7 @@ router.post(
  */
 router.get(
   "/:mandataireId/mesures",
-  typeRequired("individuel", "prepose","service"),
+  typeRequired("individuel", "prepose", "service"),
   async (req, res, next) => {
     const mandataire = await getMandataireByUserId(req.user.id);
     getMesuresEnCoursMandataire(mandataire.id)
@@ -294,7 +298,7 @@ router.get(
  */
 router.get(
   "/:mandataireId/mesures/attente",
-  typeRequired("individuel", "prepose"),
+  typeRequired("individuel", "prepose", "service"),
   async (req, res, next) => {
     const mandataire = await getMandataireByUserId(req.user.id);
     getAllMesuresAttente(mandataire.id)

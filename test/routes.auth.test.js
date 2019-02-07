@@ -112,6 +112,21 @@ describe("routes : auth", () => {
           res.body.success.should.eql(true);
           res.body.url.should.eql("/mandataires");
         }));
+    it("should login a user when username have UpperCase and space", () =>
+      chai
+        .request(server)
+        .post("/auth/login")
+        .send({
+          username: " jeRemY  ",
+          password: "johnson123"
+        })
+        .then(res => {
+          res.status.should.eql(200);
+          res.redirects.length.should.eql(0);
+          res.type.should.eql("application/json");
+          res.body.success.should.eql(true);
+          res.body.url.should.eql("/mandataires");
+        }));
     it("should not login an inactive user", () =>
       chai
         .request(server)
@@ -218,9 +233,19 @@ describe("routes : auth", () => {
           console.log("e", e);
           throw new Error("should not fail");
         }));
+    it("should fail when invalid user email", () =>
+      chai
+        .request(server)
+        .post("/auth/forgot_password")
+        .send({
+          email: "udxxxx@ud.com"
+        })
+        .then(async res => {
+          res.status.should.eql(500);
+        }));
   });
   describe("POST /auth/reset-password", () => {
-    it("shouldn't reset a password when inputs do not match", () =>
+    it("should not reset a password when inputs do not match", () =>
       chai
         .request(server)
         .post("/auth/reset_password")
@@ -252,7 +277,7 @@ describe("routes : auth", () => {
           console.log("e", e);
           //throw new Error("should not fail");
         }));
-    it("should reset a password when input match", () =>
+    it("should reset a password when input and token match", () =>
       chai
         .request(server)
         .post("/auth/reset_password")
@@ -263,6 +288,29 @@ describe("routes : auth", () => {
         })
         .then(res => {
           res.status.should.eql(200);
+        })
+        .catch(e => {
+          console.log("e", e);
+          throw new Error("should not fail");
+        }));
+    it("should empty user token+expiration on password restore", () =>
+      chai
+        .request(server)
+        .post("/auth/reset_password")
+        .send({
+          token: "LpWpzK4Jla9I87Aq",
+          newPassword: "adad",
+          verifyPassword: "adad"
+        })
+        .then(async res => {
+          res.status.should.eql(200);
+          const token = await knex
+            .select("reset_password_token")
+            .from("users")
+            .innerJoin("mandataires", "users.id", "mandataires.user_id")
+            .where("email", "ud@ud.com")
+            .first();
+          chai.should().not.exist(token.reset_password_token);
         })
         .catch(e => {
           console.log("e", e);

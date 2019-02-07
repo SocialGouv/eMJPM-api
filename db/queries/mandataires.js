@@ -57,10 +57,14 @@ const getMandataire = filters =>
     .where(filters)
     .first();
 
-const getMandataireById = id => getMandataire({ "mandataires.id": id });
+const getMandataireById = id =>
+  getMandataire({ "mandataires.id": id, "users.active": true });
 
 const getMandataireByUserId = user_id =>
-  getMandataire({ "mandataires.user_id": parseInt(user_id) });
+  getMandataire({
+    "mandataires.user_id": parseInt(user_id),
+    "users.active": true
+  });
 
 const getMesuresMap = mandataireId =>
   knex("mesures")
@@ -79,9 +83,12 @@ const getMesuresMap = mandataireId =>
       "mesures.code_postal",
       "geolocalisation_code_postal.code_postal"
     )
+    .innerJoin("mandataires", "mandataires.id", "mesures.mandataire_id")
+    .innerJoin("users", "mandataires.user_id", "users.id")
     .where({
       mandataire_id: parseInt(mandataireId),
-      status: "Mesure en cours"
+      status: "Mesure en cours",
+      "users.active": true
     })
     .groupByRaw(
       "mesures.code_postal,geolocalisation_code_postal.latitude,geolocalisation_code_postal.longitude"
@@ -105,7 +112,7 @@ function getAllByMandatairesFilter(
         "COALESCE(geolocalisation_code_postal.longitude, 0) as longitude"
       )
     )
-    .where("mandataire_tis.ti_id", parseInt(ti_id))
+    .where({ "mandataire_tis.ti_id": parseInt(ti_id), "users.active": true })
     .where(builder =>
       builder
         .whereBetween("geolocalisation_code_postal.latitude", [

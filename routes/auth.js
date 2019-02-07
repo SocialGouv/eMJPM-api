@@ -14,6 +14,7 @@ const {
   getSpecificMandataireByToken
 } = require("../db/queries/mandataires");
 
+const { addDataLogs } = require("../db/queries/logsData");
 const { resetPasswordEmail } = require("../email/password-reset");
 const { confirmationPasswordEmail } = require("../email/password-confirmation");
 
@@ -87,6 +88,13 @@ router.post("/login", authHelpers.loginRedirect, (req, res, next) => {
         }
 
         updateLastLogin(user.id)
+          .then(() =>
+            addDataLogs({
+              user_id: user.id,
+              action: "connexion",
+              result: "success"
+            })
+          )
           .then(() => {
             const token = jwt.sign(
               JSON.parse(JSON.stringify(user)),
@@ -98,7 +106,14 @@ router.post("/login", authHelpers.loginRedirect, (req, res, next) => {
               token
             });
           })
-          .catch(console.log);
+          .catch(e => {
+            addDataLogs({
+              user_id: user.id,
+              action: "connexion",
+              result: "fail"
+            });
+            return console.log(e);
+          });
       });
     }
   })(req, res, next);
@@ -155,22 +170,26 @@ router.post("/forgot_password", (req, res, next) => {
   const token = uid(16);
 
   getSpecificMandataire({ email: email })
-    .then(user =>
-      updateUser(user.user_id, {
+    .then(user => {
+      if (!user) {
+        throw new Error("user not found");
+      }
+      return updateUser(user.user_id, {
         reset_password_token: token,
         reset_password_expires: Date.now() + 7200000
-      })
-    )
+      });
+    })
     .then(() =>
       resetPasswordEmail(
         email,
         `${process.env.APP_URL}/reset-password?token=${token}`
       )
     )
-    .then(function() {
-      res.status(200).json();
-    })
-    .catch(console.log);
+    .then(() => res.status(200).json())
+    .catch(e => {
+      console.log(e);
+      res.status(500).json();
+    });
 });
 //7200000
 /**

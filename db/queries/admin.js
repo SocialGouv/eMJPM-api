@@ -5,6 +5,7 @@ const ALLOWED_FILTERS = ["users.active", "users.type"];
 
 const getMandataires = ({ filters = {}, offset = 0, limit = 50 } = {}) =>
   knex("mandataires")
+    //.debug()
     .select(
       "users.id",
       "nom",
@@ -16,6 +17,24 @@ const getMandataires = ({ filters = {}, offset = 0, limit = 50 } = {}) =>
       "users.last_login"
     )
     .join("users", { "mandataires.user_id": "users.id" })
+    .where(whitelist(filters, ALLOWED_FILTERS))
+    .offset(offset)
+    .limit(limit);
+
+const getTis = ({ filters = {}, offset = 0, limit = 50 } = {}) =>
+  knex("users")
+    .select(
+      "users.id",
+      "users.type",
+      "users_tis.cabinet",
+      "users_tis.email",
+      "users_tis.nom",
+      "users_tis.prenom",
+      "users.active",
+      "users.created_at",
+      "users.last_login"
+    )
+    .join("users_tis", { "users_tis.user_id": "users.id" })
     .where(whitelist(filters, ALLOWED_FILTERS))
     .offset(offset)
     .limit(limit);
@@ -32,5 +51,6 @@ const updateUser = ({ id, active }) => {
 
 module.exports = {
   getMandataires,
-  updateUser
+  updateUser,
+  getTis
 };
