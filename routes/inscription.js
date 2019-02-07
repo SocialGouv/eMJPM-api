@@ -8,7 +8,7 @@ const knex = require("../db/knex");
 
 const queries = require("../db/queries/inscription");
 const { inscriptionEmail } = require("../email/inscription");
-const { getNumberOfUsersByEmail } = require("../db/queries/users");
+const { getCountByEmail } = require("../db/queries/users");
 /**
  * @swagger
  *
@@ -201,8 +201,7 @@ router.post("/mandataires", async (req, res, next) => {
     });
   }
 
-  const userExists = (await getNumberOfUsersByEmail(email)).count > 0;
-
+  const userExists = (await getCountByEmail(email)).count > 0;
 
   if (userExists) {
     return res.status(409).json({
