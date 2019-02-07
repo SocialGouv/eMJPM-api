@@ -141,7 +141,7 @@ router.put(
         .then(() => getMesuresEnCoursMandataire(mandataireForIndPre.id))
         .then(mesures => res.status(200).json(mesures))
         .catch(error => next(error));
-    } else {
+    } else if (req.user.type === "ti") {
       const tiId = await getTiByUserId(req.user.id);
       updateMesure(
         {
