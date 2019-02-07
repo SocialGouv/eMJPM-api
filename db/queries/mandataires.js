@@ -180,10 +180,10 @@ const update = (mandataireID, updates) =>
     .where("id", parseInt(mandataireID))
     .update(updates);
 
-const getCoordonneesByPostCode = userId =>
+const getCoordonneesByPostCode = codePostal =>
   knex
     .from("geolocalisation_code_postal")
-    .where("code_postal", userId)
+    .where("code_postal", codePostal)
     .first();
 
 module.exports = {
