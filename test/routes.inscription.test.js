@@ -86,7 +86,7 @@ describe("routes : inscription", () => {
           longitude: 2
         })
         .then(res => {
-          res.status.should.eql(500);
+          res.status.should.eql(409);
         }));
 
     it("should fail when empty username", () =>

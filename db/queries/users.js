@@ -19,7 +19,7 @@ const user = id =>
     .where({ "users.id": id })
     .first();
 
-const getSpecificUser = data => knex.from("users").where(data);
+const getSpecificUser = data => knex.from("users").where(data).first();
 
 const getCountByEmail = email =>
   knex("users")
