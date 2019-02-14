@@ -10,13 +10,12 @@ Veuillez cliquer sur le lien suivant: ${url}
 Bonne journée :)
 `;
 
-const EMAIL_RELANCE_HTML = url => `
-Bonjour la super team eMJPM :),<br>
-<br>
-Nous avons reçu une nouvelle inscription.
-<br>
-Veuillez cliquer sur le lien suivant: <a href=${url}>Se connecter</a>
-<br><br>
+const EMAIL_RELANCE_HTML = (nom, prenom, email) => `
+Bonjour la super team eMJPM :),<br />
+
+Nous avons reçu une nouvelle inscription de ${prenom} / ${nom}  ${email} <br />
+Merci de vérifier cette nouvelle demande et de la valider.
+<br />
 Bonne journée :)
 `;
 
