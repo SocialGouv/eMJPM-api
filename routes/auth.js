@@ -99,9 +99,13 @@ router.post("/login", authHelpers.loginRedirect, (req, res, next) => {
             })
           )
           .then(() => {
+            var signOptions = {
+              expiresIn: "31d"
+            };
             const token = jwt.sign(
               JSON.parse(JSON.stringify(user)),
-              process.env.JWTKEY
+              process.env.JWTKEY,
+              signOptions
             );
             return res.status(200).json({
               success: true,
