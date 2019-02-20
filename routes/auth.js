@@ -126,6 +126,9 @@ router.post("/login", authHelpers.loginRedirect, (req, res, next) => {
   })(req, res, next);
 });
 
+router.get("/checkToken", authHelpers.loginRequired, (req, res, next) => {
+  return res.sendStatus(200);
+});
 /**
  * @swagger
  * /auth/logout:
